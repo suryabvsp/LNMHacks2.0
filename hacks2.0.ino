@@ -48,7 +48,7 @@ void loop()
         queue.pop();
       }
       
-      //printDistance = minDist;         //getMinimum
+      //printDistance = minDist;         //getMinimum Distance
       Serial.print(minDist);
       Serial.print(",");
       int A = digitalRead(IRpin);
