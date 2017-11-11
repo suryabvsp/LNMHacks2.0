@@ -1,11 +1,13 @@
 // these constants won't change:
 #include <QueueList.h>
 QueueList <float> queue;
+float printDistance;
 const int trigPin = 2;
 const int echoPin = 3;
 const int IRpin = 8;
 float duration;
 float distance;
+float min;
 void setup() {
   pinMode(IRpin, INPUT);
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
@@ -26,23 +28,37 @@ float calculateDistance() {
 
   return distance;
 }
-void loop() 
+void loop()
 {
   distance = calculateDistance();
-  
-  if (queue.count < 5)    
-    queue.push(distance);
-    
-  else 
+
+  if (queue.count < 5)
   {
-    if (distance >= 2 && distance <= 400)
+    queue.push(distance);
+    if (queue.count == 1)
+      min = distance;
+    else
     {
-      Serial.print(distance);
-      Serial.print(",");
-      int A = digitalRead(IRpin);
-      Serial.println(A);
-      delay(62);  // delay to avoid overloading the serial port buffer
+      if (distance < min)
+        min = distance;
     }
   }
+}
+
+else
+{
+  if (distance >= 2 && distance <= 400)
+  {
+    queue.pop();
+    queue.push(distance);
+    printDistance = getMinimum();
+    Serial.print(distance);
+    Serial.print(",");
+    int A = digitalRead(IRpin);
+    Serial.println(A);
+    delay(62);  // delay to avoid overloading the serial port buffer
+  }
+}
+
 }
 
