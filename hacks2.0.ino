@@ -1,5 +1,6 @@
 // these constants won't change:
 #include <QueueList.h>
+QueueList <float> queue;
 const int trigPin = 2;
 const int echoPin = 3;
 const int IRpin = 8;
@@ -10,6 +11,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
   Serial.begin(9600);
+  queue.setPrinter (Serial);
 }
 float calculateDistance() {
   unsigned long T1 = micros();
@@ -21,18 +23,26 @@ float calculateDistance() {
   duration = pulseIn(echoPin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
   //distance= duration*0.034/2;
   distance = (duration / 2) / 29.1; //in cm,  datasheet gives "duration/58" as the formula
- 
+
   return distance;
 }
-void loop() {
+void loop() 
+{
   distance = calculateDistance();
- // if (distance >= 2 && distance <= 400)
-  //{
-    Serial.print(distance);
-    Serial.print(",");
-    int A = digitalRead(IRpin);
-    Serial.println(A);
-    delay(62);  // delay to avoid overloading the serial port buffer
- // }
+  
+  if (queue.count < 5)    
+    queue.push(distance);
+    
+  else 
+  {
+    if (distance >= 2 && distance <= 400)
+    {
+      Serial.print(distance);
+      Serial.print(",");
+      int A = digitalRead(IRpin);
+      Serial.println(A);
+      delay(62);  // delay to avoid overloading the serial port buffer
+    }
+  }
 }
 
